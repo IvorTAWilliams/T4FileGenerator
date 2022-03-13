@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="T4FileGenerator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\Library\T4FileGenerator\bin\release\net6.0\T4FileGenerator.dll</HintPath>
+        </Reference>
+        <PackageReference Include="DiffMatchPatch" Version="1.0.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Templates\SampleTemplate.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>SampleTemplate.tt</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Templates\SampleTemplate.tt">
+            <Generator>TextTemplatingFilePreprocessor</Generator>
+            <LastGenOutput>SampleTemplate.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+
+</Project>

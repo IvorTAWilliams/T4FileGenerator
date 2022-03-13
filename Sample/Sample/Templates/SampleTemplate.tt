@@ -1,0 +1,14 @@
+<#@ template language="C#" inherits="BaseTemplate<Models.Sample>"#>
+<#@ import namespace="T4FileGenerator.BaseTemplate" #>
+
+
+Hello World Fool
+
+<#= Model.Name #>
+
+
+
+
+<#+
+    public override string RelativeFilePath => $"{Model.Name}.cs";
+#>
