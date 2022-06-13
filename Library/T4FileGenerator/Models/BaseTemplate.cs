@@ -2,7 +2,8 @@
 {
 	public abstract class BaseTemplate<T>
 	{
-		public abstract string RelativeFilePath { get; }
+		public virtual string RelativeFilePath { get; }
+		public virtual bool? DoGenerate { get; }
 
 		public virtual T Model { get; set; }
 

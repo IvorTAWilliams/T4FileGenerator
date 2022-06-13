@@ -4,6 +4,10 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>T4FileGenerator</PackageId>
+        <Version>1.1.0</Version>
+        <Authors>Thomas Williams</Authors>
+        <Company>UpForIt</Company>
     </PropertyGroup>
 
     <ItemGroup>

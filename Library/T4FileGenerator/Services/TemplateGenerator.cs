@@ -16,7 +16,8 @@ public class TemplateGenerator
 		var fileManagerConfiguration = new FileManagerConfiguration
 		{
 			TargetPath = _configuration.TargetPath,
-			OverwriteHuman = _configuration.OverwriteHuman
+			OverwriteHuman = _configuration.OverwriteHuman,
+			RestoreDeletedFiles = _configuration.RestoreDeletedFiles,
 		};
 		_fileManager = new FileManager(fileManagerConfiguration);
 		_fileManager.HumanFiles = _fileManager.LoadFiles(excludedDirs: new[] {_configuration.GeneratedFolder});
@@ -26,7 +27,7 @@ public class TemplateGenerator
 
 	public void Generate<T>(T model)
 	{
-		OutputFiles.AddRange(Task.WhenAll(GenerateInternal(model)).Result.ToList());
+		OutputFiles.AddRange(Task.WhenAll(GenerateInternal(model)).Result.Where(x => x.DoGenerate != false).ToList());
 	}
 
 	private IEnumerable<Task<OutputFile>> GenerateInternal<T>(T model)
@@ -39,7 +40,7 @@ public class TemplateGenerator
 	
 	public void Generate<T>(IEnumerable<T> models)
 	{
-		OutputFiles.AddRange(Task.WhenAll(GenerateInternal(models)).Result.ToList());
+		OutputFiles.AddRange(Task.WhenAll(GenerateInternal(models)).Result.Where(x => x.DoGenerate != false ).ToList());
 	}
 
 	private IEnumerable<Task<OutputFile>> GenerateInternal<T>(IEnumerable<T> models)

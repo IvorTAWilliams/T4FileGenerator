@@ -72,6 +72,10 @@ namespace T4FileGenerator.Services
 				{
 					outputFilesTasks.Add(FileMerger.Merge(originalFile, humanFile, generatedFile));
 				}
+				else if (humanFile == null && originalFile != null && _configuration.RestoreDeletedFiles)
+				{
+					outputFiles.Add(generatedFile);
+				}
 				// if it's a brand new file
 				else if (humanFile == null)
 				{
