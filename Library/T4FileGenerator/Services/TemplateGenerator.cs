@@ -7,7 +7,7 @@ namespace T4FileGenerator.Services;
 public class TemplateGenerator
 {
 	private readonly TemplateGeneratorConfiguration _configuration;
-	private readonly FileManager _fileManager;
+	public FileManager FileManager;
 	public List<OutputFile> OutputFiles;
 
 	public TemplateGenerator(TemplateGeneratorConfiguration configuration)
@@ -15,13 +15,12 @@ public class TemplateGenerator
 		_configuration = configuration;
 		var fileManagerConfiguration = new FileManagerConfiguration
 		{
-			TargetPath = _configuration.TargetPath,
 			OverwriteHuman = _configuration.OverwriteHuman,
 			RestoreDeletedFiles = _configuration.RestoreDeletedFiles,
 		};
-		_fileManager = new FileManager(fileManagerConfiguration);
-		_fileManager.HumanFiles = _fileManager.LoadFiles(excludedDirs: new[] {_configuration.GeneratedFolder});
-		_fileManager.OriginalFiles = _fileManager.LoadFiles(subPath: _configuration.GeneratedFolder);
+		FileManager = new FileManager(fileManagerConfiguration);
+		FileManager.HumanFiles = FileManager.LoadFiles(Path.Combine(configuration.RootDir, configuration.RelativeOutputFolder));
+		FileManager.OriginalFiles = FileManager.LoadFiles(Path.Combine(_configuration.RootDir, _configuration.RelativeGeneratedFolder, _configuration.RelativeOutputFolder));
 		OutputFiles = new List<OutputFile>();
 	}
 
@@ -34,7 +33,7 @@ public class TemplateGenerator
 	{
 		foreach (var template in TemplateFinder.GetTemplates<BaseTemplate<T>>(_configuration.ExecutingAssembly))
 		{
-			yield return Task.Run(() => template.InjectModel(model).GenerateOutputFile(_configuration.TargetPath));
+			yield return Task.Run(() => template.InjectModel(model).GenerateOutputFile(Path.Combine(_configuration.RootDir, _configuration.RelativeOutputFolder)));
 		}
 	}
 	
@@ -47,15 +46,16 @@ public class TemplateGenerator
 	{
 		return from model in models
 			from template in TemplateFinder.GetTemplates<BaseTemplate<T>>(_configuration.ExecutingAssembly)
-			select Task.Run(() => template.InjectModel(model).GenerateOutputFile(_configuration.TargetPath));
+			select Task.Run(() => template.InjectModel(model).GenerateOutputFile(Path.Combine(_configuration.RootDir, _configuration.RelativeOutputFolder)));
 	}
 	
-	public void WriteOutputFiles()
+	public void WriteOutputFiles(List<string>? cleaningExclude = null)
 	{
-		_fileManager.GeneratedFiles = OutputFiles;
-		_fileManager.OutputFiles = _fileManager.ComputeOutputFiles();
-		_fileManager.WriteFiles(_fileManager.GeneratedFiles, _configuration.GeneratedFolder);
-		_fileManager.WriteFiles(_fileManager.OutputFiles);
-		_fileManager.CleanOldGeneratedFiles();
+		var generatedPath = Path.Combine(_configuration.RootDir, _configuration.RelativeGeneratedFolder, _configuration.RelativeOutputFolder);
+		FileManager.GeneratedFiles = OutputFiles;
+		FileManager.OutputFiles = FileManager.ComputeOutputFiles();
+		FileManager.WriteFiles(FileManager.GeneratedFiles, generatedPath);
+		FileManager.WriteFiles(FileManager.OutputFiles, Path.Combine(_configuration.RootDir, _configuration.RelativeOutputFolder));
+		FileManager.CleanOldGeneratedFiles(generatedPath);
 	}
 }

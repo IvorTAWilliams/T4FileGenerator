@@ -21,7 +21,7 @@ namespace T4FileGenerator.Services
 			}
 			var validDirItems = Directory
 				.GetFileSystemEntries(dir)
-				.Where(x => !_excludeDirs.Exists(e => Regex.IsMatch(x, e, RegexOptions.IgnoreCase)));
+				.Where(x => !_excludeDirs.Exists(e => x.ToLower().Contains(e.ToLower())));
 			
 			foreach (var item in validDirItems)
 			{

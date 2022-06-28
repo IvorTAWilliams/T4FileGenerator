@@ -4,8 +4,9 @@
 	{
 		public static string NormalizePath(string path)
 		{
-			return Path.GetFullPath(new Uri(path).LocalPath)
+			return path
 				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+				.Replace("\\", "/")
 				.ToUpperInvariant();
 		}
 		public static string RemoveCarriageReturns(this string sample)
